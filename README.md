@@ -1,4 +1,4 @@
-# Interview Helper API
+# Nodejs Typescript template
 
 A production-ready Node.js API built with TypeScript and functional programming principles.
 
