@@ -25,7 +25,6 @@ app.use(createRequestLogger());
 
 app.use(createRateLimiter());
 
-
 app.use('/health', healthRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -41,12 +40,12 @@ const server = app.listen(env.PORT, () => {
 
 const gracefulShutdown = (signal: string): void => {
   log.info(`Received ${signal}. Shutting down gracefully...`);
-  
+
   server.close(() => {
     log.info('HTTP server closed');
     process.exit(0);
   });
-  
+
   setTimeout(() => {
     log.error('Could not close connections in time, forcefully shutting down');
     process.exit(1);

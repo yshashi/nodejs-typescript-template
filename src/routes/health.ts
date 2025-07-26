@@ -1,18 +1,15 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { z } from 'zod';
 import { env } from '../config/env.js';
 import { log } from '../utils/logger.js';
 
-const healthResponseSchema = z.object({
-  status: z.literal('ok'),
-  timestamp: z.string(),
-  uptime: z.number(),
-  environment: z.string(),
-  version: z.string(),
-});
-
-type HealthResponse = z.infer<typeof healthResponseSchema>;
+type HealthResponse = {
+  status: 'ok';
+  timestamp: string;
+  uptime: number;
+  environment: string;
+  version: string;
+};
 
 const getHealthData = (): HealthResponse => ({
   status: 'ok',

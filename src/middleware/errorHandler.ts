@@ -7,22 +7,22 @@ import type { Request, Response } from 'express';
 
 const normalizeError = (err: Error): AppError => {
   if (err instanceof ZodError) {
-    const message = err.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const message = err.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
     return new ValidationError(message);
   }
-  
+
   if (err instanceof SyntaxError && 'body' in err) {
     return new ValidationError('Invalid JSON');
   }
-  
+
   if (err instanceof AppError) {
     return err;
   }
-  
+
   return new AppError(
     process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message,
     500,
-    false
+    false,
   );
 };
 
@@ -30,10 +30,10 @@ export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ): void => {
   const normalizedError = normalizeError(err);
-  
+
   if (normalizedError.isOperational) {
     log.warn(`Operational error: ${normalizedError.message}`, {
       statusCode: normalizedError.statusCode,
@@ -47,7 +47,7 @@ export const errorHandler = (
       method: req.method,
     });
   }
-  
+
   res.status(normalizedError.statusCode).json(formatErrorResponse(normalizedError));
 };
 

@@ -9,7 +9,7 @@ export class AppError extends Error {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
-    
+
     // Capture stack trace
     Error.captureStackTrace(this, this.constructor);
   }
@@ -48,13 +48,11 @@ export const formatErrorResponse = (error: Error): Record<string, unknown> => {
       ...(process.env.NODE_ENV === 'development' ? { stack: error.stack } : {}),
     };
   }
-  
+
   // For unknown errors, provide a generic message in production
   return {
     status: 'error',
-    message: process.env.NODE_ENV === 'production' 
-      ? 'Something went wrong' 
-      : error.message,
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : error.message,
     ...(process.env.NODE_ENV === 'development' ? { stack: error.stack } : {}),
   };
 };
@@ -63,13 +61,19 @@ export const formatErrorResponse = (error: Error): Record<string, unknown> => {
 export const setupGlobalErrorHandlers = (): void => {
   // Handle uncaught exceptions
   process.on('uncaughtException', (error: Error) => {
-    log.error('UNCAUGHT EXCEPTION! 💥 Shutting down...', { error: error.message, stack: error.stack });
+    log.error('UNCAUGHT EXCEPTION! 💥 Shutting down...', {
+      error: error.message,
+      stack: error.stack,
+    });
     process.exit(1);
   });
 
   // Handle unhandled promise rejections
   process.on('unhandledRejection', (reason: Error) => {
-    log.error('UNHANDLED REJECTION! 💥 Shutting down...', { error: reason.message, stack: reason.stack });
+    log.error('UNHANDLED REJECTION! 💥 Shutting down...', {
+      error: reason.message,
+      stack: reason.stack,
+    });
     process.exit(1);
   });
 };
